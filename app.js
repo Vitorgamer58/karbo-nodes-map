@@ -1,17 +1,25 @@
-const app = require('express')();
-const locations = require('./locations');
+const express = require('express');
+const app = express();
+const locations = require("./getallpeers.js");
 
-locations.cacheLocations();
-setInterval(locations.cacheLocations, 36e5); // 1hr
 
 app.set('view engine', 'ejs');
 app.set("views", __dirname + "/views");
-
+app.use(express.static(__dirname + '/vendor'));
 // blog home page
-app.get('/', async (req, res) => {
-    res.render('home', { locations: await locations.getCachedLocations() });
+app.get('/clrcache',  (req, res) => {
+    locations.clrcache();
+    res.send("clrcache");
+});
+app.get('/locations', async (req, res) => {
+    res.send(await locations.getLocations());
+});
+app.get('/getmastenodes', async (req, res) => {
+
+    res.send(await locations.getMasterNodes());
 });
 
+locations.getLocations();
 
 app.listen(8081);
 
